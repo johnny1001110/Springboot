@@ -1,0 +1,80 @@
+/* 美化 main 标签内的内容 */
+main {
+    margin: 20px; /* 添加外边距 */
+    padding: 0; /* 去除左右内边距 */
+}
+
+/* 表格样式 */
+table {
+    width: 100%; /* 表格宽度为100% */
+    border-collapse: collapse; /* 合并表格单元格边框 */
+    margin-bottom: 20px; /* 添加下方外边距 */
+}
+
+th, td {
+    padding: 10px; /* 添加内边距 */
+    border: 1px solid #ddd; /* 表格边框颜色 */
+    text-align: center; /* 内容居中 */
+}
+
+
+
+th {
+    background-color: #f8f9fa; /* 表头背景色 */
+}
+
+/* 按钮样式 */
+button {
+    padding: 8px 12px; /* 按钮内边距 */
+    background-color: #343a40; /* 按钮背景色（黑色） */
+    color: white; /* 按钮文本颜色 */
+    border: none; /* 去除边框 */
+    border-radius: 4px; /* 方角样式 */
+    cursor: pointer; /* 鼠标指针样式 */
+    margin: 5px; /* 按钮之间的间距 */
+    white-space: nowrap; /* 防止文本换行 */
+}
+
+button:hover {
+    background-color: #23272b; /* 按钮悬停时的背景色 */
+}
+
+/* h2 样式 */
+h2 {
+    margin-bottom: 20px; /* 添加下方外边距 */
+    color: #343a40; /* 标题颜色 */
+}
+
+
+
+
+.logtext{
+	width: calc(100% - 20px); /* 宽度减去外边距 */
+    padding: 8px; /* 添加内边距 */
+    margin-bottom: 10px; /* 添加下方外边距 */
+    border: 1px solid #ddd; /* 边框颜色 */
+    border-radius: 4px; /* 方角样式 */
+    box-sizing: border-box; /* 包含内边距和边框 */
+    font-size: 14px; /* 默认字体大小 */
+}
+
+.input-log{
+		min-width: 200px;
+		max-width: 200px;
+	
+}
+
+.container {
+		    display: flex;
+		    flex-direction: row;
+		}
+		
+		#layoutSidenav_nav {
+		    width: 300px; /* Set the width of the left side navigation */
+		    /* Other styles for left side navigation */
+		}
+		
+		.content {
+		    flex-grow: 1; /* Allow the content to grow to fill the available space */
+			margin-left: 250px;
+		}

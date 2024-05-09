@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>活動列表</title>
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<link rel="stylesheet" href="/static/backend/activity/css/style.css">
+</head>
+
+<body>
+	<a th:href="@{/activityqueryall}">
+		<h1>活動列表</h1>
+	</a>
+	<button onclick="window.location.href = '/backend/activity/insertActivity.html'">新增活動</button>
+
+	<div>
+		<!-- 上一頁連結 -->
+		<a th:if="${currentPage > 0}" th:href="@{'?page=' + ${currentPage - 1} + '&size=10'}">上一頁</a>
+
+		<!-- 頁數連結 -->
+		<span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+			<a th:if="${pageNum == currentPage}" th:text="${pageNum + 1}"></a>
+			<a th:if="${pageNum != currentPage}" th:href="@{'?page=' + ${pageNum} + '&size=10'}"
+				th:text="${pageNum + 1}"></a>
+			<span th:if="${pageNum != totalPages - 1}"> &nbsp;&nbsp; </span> <!-- 添加分隔符，增加可讀性 -->
+		</span>
+
+		<!-- 下一頁連結 -->
+		<a th:if="${currentPage < totalPages - 1}" th:href="@{'?page=' + ${currentPage + 1} + '&size=10'}">下一頁</a>
+	</div>
+
+	<table border="1">
+		<thead>
+			<tr>
+				<th>活動ID</th>
+				<th>活動名稱</th>
+				<th>類別</th>
+				<th>描述</th>
+				<th>包含項目</th>
+				<th>不包含項目</th>
+				<th>限制條件</th>
+				<th>額外資訊</th>
+<!--				<th>最大參與人數</th>-->
+				<th>地點</th>
+				<th>地址</th>
+				<th>預計停留時間（小時）</th>
+				<th>價格</th>
+<!--				<th>折扣</th>-->
+				<th>有效開始日期</th>
+				<th>有效結束日期</th>
+				<th>修改</th>
+				<th>刪除</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="activity : ${activities}">
+				<td th:text="${activity.tourID}"></td>
+				<td th:text="${activity.tourName}"></td>
+				<td th:text="${activity.tourCategory}"></td>
+				<td th:text="${activity.tourDescription}"></td>
+				<td th:text="${activity.includedItems}"></td>
+				<td th:text="${activity.excludedItems}"></td>
+				<td th:text="${activity.restrictions}"></td>
+				<td th:text="${activity.additional}"></td>
+<!--				<td th:text="${activity.maxParticipants}"></td>-->
+				<td th:text="${activity.location}"></td>
+				<td th:text="${activity.fullAddress}"></td>
+				<td th:text="${activity.durationhours}"></td>
+				<td th:text="${activity.price}"></td>
+<!--				<td th:text="${activity.discount}"></td>-->
+				<td th:text="${activity.validFrom}"></td>
+				<td th:text="${activity.validTo}"></td>
+				<td>
+					<a th:href="@{/activity/edit/{id}(id=${activity.tourID})}">
+						<button>修改</button>
+					</a>
+				</td>
+				<td>
+					<button th:onclick="'deleteActivity(\'' + ${activity.tourID} + '\')'">刪除</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<a href="/backend/mall_homepage.html">首頁</a>
+
+	<script th:inline="javascript">
+
+		/*<![CDATA[*/
+		function deleteActivity(activityId) {
+			if (confirm("確定要刪除該活動嗎？")) {
+				$.ajax({
+					url: '/activity/delete/' + activityId,
+					type: 'DELETE',
+					success: function (response) {
+						location.reload();
+					},
+					error: function (xhr, status, error) {
+						console.error(error);
+						alert('刪除活動時出現錯誤');
+					}
+				});
+			}
+		}
+		/*]]>*/
+
+
+		function editActivity(activityId) {
+			window.location.href = '/activity/edit/' + activityId;
+		}
+
+	</script>
+
+</body>
+
+</html>

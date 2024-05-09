@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>編輯活動</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>編輯活動</h1>
+        <form th:action="@{/activity/update/{tourID}(tourID=${activity.tourID})}" method="post">
+            <label for="tourName">活動名稱:</label>
+            <input type="text" id="tourName" name="tourName" th:value="${activity.tourName}">
+
+            <label for="tourCategory">類別:</label>
+            <input type="text" id="tourCategory" name="tourCategory" th:value="${activity.tourCategory}">
+
+            <label for="tourDescription">描述:</label>
+            <input type="text" id="tourDescription" name="tourDescription" th:value="${activity.tourDescription}">
+
+            <label for="includedItems">包含項目:</label>
+            <input type="text" id="includedItems" name="includedItems" th:value="${activity.includedItems}">
+
+            <label for="excludedItems">不包含項目:</label>
+            <input type="text" id="excludedItems" name="excludedItems" th:value="${activity.excludedItems}">
+
+            <label for="restrictions">限制條件:</label>
+            <input type="text" id="restrictions" name="restrictions" th:value="${activity.restrictions}">
+
+            <label for="additional">額外資訊:</label>
+            <input type="text" id="additional" name="additional" th:value="${activity.additional}">
+
+            <label for="maxParticipants">最大參與人數:</label>
+            <input type="text" id="maxParticipants" name="maxParticipants" th:value="${activity.maxParticipants}">
+
+			<label for="location">地點:</label><br>
+			        <select id="location" name="location" th:value="${activity.location}">
+						<option value="1" th:selected="${activity.location == '臺北市'}">臺北市</option>
+						<option value="2" th:selected="${activity.location == '新北市'}">新北市</option>
+						<option value="3" th:selected="${activity.location == '桃園市'}">桃園市</option>
+						<option value="4" th:selected="${activity.location == '台中市'}">台中市</option>
+						<option value="5" th:selected="${activity.location == '台南市'}">台南市</option>
+						<option value="6" th:selected="${activity.location == '高雄市'}">高雄市</option>
+						<option value="7" th:selected="${activity.location == '基隆市'}">基隆市</option>
+						<option value="8" th:selected="${activity.location == '新竹市'}">新竹市</option>
+						<option value="9" th:selected="${activity.location == '嘉義市'}">嘉義市</option>
+						<option value="10" th:selected="${activity.location == '新竹縣'}">新竹縣</option>
+						<option value="11" th:selected="${activity.location == '苗栗縣'}">苗栗縣</option>
+						<option value="12" th:selected="${activity.location == '彰化縣'}">彰化縣</option>
+						<option value="13" th:selected="${activity.location == '南投縣'}">南投縣</option>
+						<option value="14" th:selected="${activity.location == '雲林縣'}">雲林縣</option>
+						<option value="15" th:selected="${activity.location == '嘉義縣'}">嘉義縣</option>
+						<option value="16" th:selected="${activity.location == '屏東縣'}">屏東縣</option>
+						<option value="17" th:selected="${activity.location == '宜蘭縣'}">宜蘭縣</option>
+						<option value="18" th:selected="${activity.location == '花蓮縣'}">花蓮縣</option>
+						<option value="19" th:selected="${activity.location == '台東縣'}">台東縣</option>
+						<option value="20" th:selected="${activity.location == '澎湖縣'}">澎湖縣</option>
+						<option value="21" th:selected="${activity.location == '金門縣'}">金門縣</option>
+						<option value="22" th:selected="${activity.location == '連江縣'}">連江縣</option>
+			        </select><br>
+
+            <label for="fullAddress">地址:</label>
+            <input type="text" id="fullAddress" name="fullAddress" th:value="${activity.fullAddress}">
+
+            <label for="durationhours">時長（小時）:</label>
+            <input type="text" id="durationhours" name="durationhours" th:value="${activity.durationhours}">
+
+            <label for="price">價格:</label>
+            <input type="text" id="price" name="price" th:value="${activity.price}">
+
+            <label for="discount">折扣:</label>
+            <input type="text" id="discount" name="discount" th:value="${activity.discount}">
+
+            <label for="validFrom">有效開始日期:</label>
+            <input type="date" id="validFrom" name="validFrom" th:value="${activity.validFrom}">
+
+            <label for="validTo">有效結束日期:</label>
+            <input type="date" id="validTo" name="validTo" th:value="${activity.validTo}">
+
+            <button type="submit">保存修改</button>
+        </form>
+    </div>
+</body>
+</html>

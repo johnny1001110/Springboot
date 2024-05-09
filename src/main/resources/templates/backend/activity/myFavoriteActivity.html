@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>我的收藏</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f4f4f4;
+		}
+
+		h1 {
+			text-align: center;
+			margin-top: 20px;
+			color: #333;
+		}
+
+		#favorite-activities-list {
+			max-width: 600px;
+			margin: 0 auto;
+			padding: 20px;
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.activity {
+			margin-bottom: 20px;
+			padding: 20px;
+			background-color: #f9f9f9;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			position: relative;
+		}
+
+		.activity-controls {
+			position: absolute;
+			top: 16px;
+			left: 150px;
+		}
+
+		.move-up-btn,
+		.move-down-btn,
+		.remove-btn {
+			padding: 5px 10px;
+			font-size: 16px;
+			cursor: pointer;
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			margin-right: 5px;
+			transition: background-color 0.3s;
+		}
+
+		.move-up-btn:hover,
+		.move-down-btn:hover,
+		.remove-btn:hover {
+			background-color: #0056b3;
+			/* Darker blue on hover */
+		}
+
+		.remove-btn {
+			position: relative;
+			top: -145px;
+			left: 540px;
+		}
+
+		.activity-info {
+			margin-left: 50px;
+		}
+
+		h3 {
+			margin-top: 0;
+			margin-bottom: 10px;
+			color: #333;
+		}
+
+		p {
+			margin-top: 0;
+			color: #666;
+		}
+
+
+		#map {
+			display: none;
+		}
+
+		#result {
+			display: none;
+		}
+
+		@media only screen and (max-width: 600px) {
+			#favorite-activities-list {
+				max-width: 100%;
+			}
+
+		}
+
+		#start-time-field {
+			position: absolute;
+			top: 50px;
+			left: 650px;
+			padding-top:30px ;
+		}
+		
+		.title{
+			padding-bottom:30px ;
+		}
+		
+	</style>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+	<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+</head>
+
+<body>
+	<h1 class="title">我的行程</h1>>
+	<div id="start-time-field">
+		<label for="start-time">行程開始時間：</label>
+		<input type="time" id="start-time" name="start-time" value="08:00">
+	</div>
+	<div id="favorite-activities-list">
+		<!-- 这里将显示已收藏的活动列表 -->
+	</div>
+	<div id="result"></div>
+	<div id="map" style="height: 400px;"></div>
+
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			let favoriteActivities = JSON.parse(localStorage.getItem('favoriteActivities')) || [];
+			const favoriteActivitiesList = document.getElementById('favorite-activities-list');
+
+			function renderActivities() {
+				favoriteActivitiesList.innerHTML = '';
+				favoriteActivities.forEach(function (activity, index) {
+					const activityElement = createActivityElement(activity, index);
+					favoriteActivitiesList.appendChild(activityElement);
+				});
+			}
+			
+			
+			function createActivityElement(activity, index) {
+				const activityElement = document.createElement('div');
+				activityElement.classList.add('activity');
+				activityElement.setAttribute('data-index', index);
+
+				// Create a div element to display travel time information
+				const travelTimeElement = document.createElement('div');
+				travelTimeElement.classList.add('travel-time');
+
+				activityElement.innerHTML = `
+			        <div class="move-btns">
+			            <button class="move-up-btn" style="${index === 0 ? 'display: none;' : 'display: inline-block;'}">↑</button>
+			            <!-- Hide the "↓" button for the last activity -->
+			            <button class="move-down-btn" style="${index === favoriteActivities.length - 1 ? 'display: none;' : 'display: inline-block;'}">↓</button>
+			        </div>
+					<h3 class="activity-index">行程${index + 1}</h3>
+			        <h3>${activity.name}</h3>
+<!--			        <p>${activity.fullAddress}</p>-->
+			        <p>預計停留時間${activity.durationHours}小時</p>
+			        <button class="remove-btn">X</button>
+			    `;
+				// Append the travel time element to the activity element
+				activityElement.appendChild(travelTimeElement);
+
+				// Update lastTravelTimeElement reference
+				if (index === favoriteActivities.length - 1) {
+					lastTravelTimeElement = travelTimeElement;
+				}
+
+				return activityElement;
+			}
+
+			renderActivities();
+
+			function swapActivities(index1, index2) {
+				const temp = favoriteActivities[index1];
+				favoriteActivities[index1] = favoriteActivities[index2];
+				favoriteActivities[index2] = temp;
+				renderActivities();
+			}
+
+			function updateActivitiesOrder() {
+				const activityElements = document.querySelectorAll('.activity');
+				activityElements.forEach(function (activityElement, index) {
+					activityElement.querySelector('.activity-index').textContent = `行程${index + 1}`;
+					activityElement.setAttribute('data-index', index);
+					// Show or hide "↑" button based on position
+					const moveUpBtn = activityElement.querySelector('.move-up-btn');
+					moveUpBtn.style.display = (index === 0) ? 'none' : 'inline-block';
+					// Show or hide "↓" button based on position
+					const moveDownBtn = activityElement.querySelector('.move-down-btn');
+					moveDownBtn.style.display = (index === favoriteActivities.length - 1) ? 'none' : 'inline-block';
+				});
+				localStorage.setItem('favoriteActivities', JSON.stringify(favoriteActivities));
+			}
+
+			function convertAndCalculate() {
+				const routeInfo = document.getElementById('result');
+				routeInfo.innerHTML = '';
+
+				const startTimeField = document.getElementById('start-time');
+
+				function calculateRouteTime() {
+					let previousArrivalTime = startTimeField.value;
+					for (let i = 0; i < favoriteActivities.length - 1; i++) {
+						const address1 = favoriteActivities[i].fullAddress;
+						const address2 = favoriteActivities[i + 1].fullAddress;
+						const activityDurationHours = favoriteActivities[i].durationHours;
+
+						const url1 = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address1);
+						const url2 = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address2);
+
+						Promise.all([fetch(url1), fetch(url2)])
+							.then(responses => {
+								return Promise.all(responses.map(response => response.json()));
+							})
+							.then(data => {
+								const latitude1 = data[0][0].lat;
+								const longitude1 = data[0][0].lon;
+								const latitude2 = data[1][0].lat;
+								const longitude2 = data[1][0].lon;
+
+								const travelTimeElement = document.querySelectorAll('.travel-time')[i];
+								L.Routing.control({
+									waypoints: [
+										L.latLng(latitude1, longitude1),
+										L.latLng(latitude2, longitude2)
+									],
+									routeWhileDragging: true,
+									show: false
+								}).on('routesfound', function (e) {
+									const routes = e.routes;
+									if (routes && routes.length > 0) {
+										const route = routes[0];
+										const totalTime = route.summary.totalTime;
+										const totalMinutes = Math.round(totalTime / 60);
+										const arrivalTime = calculateArrivalTime(previousArrivalTime, totalMinutes + (activityDurationHours * 60));
+										travelTimeElement.innerHTML = '活動' + (i + 1) + ' 到活動 ' + (i + 2) + '交通時間: ' + totalMinutes + ' minutes<br>';
+										travelTimeElement.innerHTML += '預計到達活動' + (i + 2) + '時間:' + arrivalTime + '<br>';
+										previousArrivalTime = arrivalTime;
+
+										if (i === favoriteActivities.length - 2) { // 最後一個行程
+											const lastActivityArrivalTime = calculateArrivalTime(previousArrivalTime, activityDurationHours * 60);
+											lastTravelTimeElement.innerHTML = '最後結束時間: ' + lastActivityArrivalTime; // 顯示最後結束時間
+										}
+									} else {
+										travelTimeElement.innerHTML = 'No routes found<br>';
+									}
+								}).addTo(map);
+							})
+							.catch(error => {
+								routeInfo.innerHTML += "Error: " + error.message + "<br>";
+								console.error('Error:', error);
+							});
+					}
+				}
+
+				// 初始計算一次
+				calculateRouteTime();
+
+				// 監聽時間字段的更改
+				startTimeField.addEventListener('input', function () {
+					// 每次時間更改時重新計算路線時間
+					calculateRouteTime();
+				});
+			}
+
+			convertAndCalculate();
+
+			function updateActivitiesOrderAndCalculate() {
+				updateActivitiesOrder();
+				convertAndCalculate();
+			}
+
+			favoriteActivitiesList.addEventListener('click', function (event) {
+				if (event.target.classList.contains('remove-btn')) {
+					const index = parseInt(event.target.parentNode.getAttribute('data-index'));
+					favoriteActivities.splice(index, 1);
+					localStorage.setItem('favoriteActivities', JSON.stringify(favoriteActivities));
+					event.target.parentNode.remove();
+					updateActivitiesOrderAndCalculate(); // 调用更新顺序并重新计算交通时间函数
+				} else if (event.target.classList.contains('move-up-btn')) {
+					const index = parseInt(event.target.parentNode.parentNode.getAttribute('data-index'));
+					if (index > 0) {
+						swapActivities(index, index - 1);
+						updateActivitiesOrderAndCalculate(); // 调用更新顺序并重新计算交通时间函数
+					}
+				} else if (event.target.classList.contains('move-down-btn')) {
+					const index = parseInt(event.target.parentNode.parentNode.getAttribute('data-index'));
+					if (index < favoriteActivities.length - 1) {
+						swapActivities(index, index + 1);
+						updateActivitiesOrderAndCalculate(); // 调用更新顺序并重新计算交通时间函数
+					}
+				}
+			});
+		});
+	</script>
+
+	<script>
+		function calculateArrivalTime(startTime, totalMinutes) {
+			const [startHour, startMinute] = startTime.split(':').map(Number);
+			const totalHour = Math.floor(totalMinutes / 60);
+			const totalMinute = totalMinutes % 60;
+			let hour = startHour + totalHour;
+			let minute = startMinute + totalMinute;
+			if (minute >= 60) {
+				hour++;
+				minute -= 60;
+			}
+			// 处理小时超过 24 小时的情况
+			hour = hour % 24;
+			return hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
+		}
+
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address to Latitude, Longitude, and Route</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+</head>
+<body>
+    <h1>Address to Latitude, Longitude, and Route</h1>
+    <p>Enter your addresses:</p>
+    <input type="text" id="addressInput1" placeholder="Address 1">
+    <input type="text" id="addressInput2" placeholder="Address 2">
+    <button onclick="convertAndCalculate()">Calculate Route</button>
+    <div id="result"></div>
+    <div id="map" style="height: 400px;"></div>
+
+    <script>
+        var map = L.map('map').setView([25.0375198,121.5636796], 10);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function convertAndCalculate() {
+            var address1 = document.getElementById('addressInput1').value;
+            var address2 = document.getElementById('addressInput2').value;
+            var url1 = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address1);
+            var url2 = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(address2);
+
+            Promise.all([fetch(url1), fetch(url2)])
+                .then(responses => {
+                    return Promise.all(responses.map(response => response.json()));
+                })
+                .then(data => {
+                    var latitude1 = data[0][0].lat;
+                    var longitude1 = data[0][0].lon;
+                    var latitude2 = data[1][0].lat;
+                    var longitude2 = data[1][0].lon;
+                    var routeInfo = document.getElementById('result');
+                    routeInfo.innerHTML = "Address 1 Latitude: " + latitude1 + "<br>Address 1 Longitude: " + longitude1 + "<br>";
+                    routeInfo.innerHTML += "Address 2 Latitude: " + latitude2 + "<br>Address 2 Longitude: " + longitude2;
+
+                    L.Routing.control({
+                        waypoints: [
+                            L.latLng(latitude1, longitude1),
+                            L.latLng(latitude2, longitude2)
+                        ],
+                        routeWhileDragging: true,
+                        show: false
+                    }).on('routesfound', function(e) {
+                        var routes = e.routes;
+                        if (routes && routes.length > 0) {
+                            var route = routes[0];
+                            var totalTime = route.summary.totalTime;
+                            var totalMinutes = Math.round(totalTime / 60);
+                            routeInfo.innerHTML += '<br>Travel Time: ' + totalMinutes + ' minutes';
+                        } else {
+                            routeInfo.innerHTML += '<br>No routes found';
+                        }
+                    }).addTo(map);
+                })
+                .catch(error => {
+                    document.getElementById('result').innerHTML = "Error: " + error.message;
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>

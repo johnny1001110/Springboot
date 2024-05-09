@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html class="wide wow-animation" lang="en">
+
+<head>
+	<title>旅遊活動列表</title>
+	<meta charset="UTF-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport"
+		content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+		integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" type="text/css"
+		href="//fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7CPoppins:400%7CTeko:300,400">
+	<link rel="stylesheet" href="/static/activity/css/style.css">
+	<link rel="stylesheet" href="/static/activity/css/fonts.css">
+	<link rel="stylesheet" href="/static/activity/css/bootstrap.css">
+</head>
+<style>
+	.ie-panel {
+		display: none;
+		background: #212121;
+		padding: 10px 0;
+		box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, .3);
+		clear: both;
+		text-align: center;
+		position: relative;
+		z-index: 1;
+	}
+
+	html.ie-10 .ie-panel,
+	html.lt-ie-10 .ie-panel {
+		display: block;
+	}
+
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	/* Body styles */
+	body {
+		font-family: Arial, sans-serif;
+		line-height: 1.6;
+		background-color: #f5f5f5;
+		overflow-x: hidden;
+	}
+
+	/* Header styles */
+	header {
+		color: #fff;
+		padding: 20px;
+		text-align: center;
+	}
+
+	h1 {
+		font-size: 40px;
+		border-bottom: 2px solid black;
+		margin-bottom: 30px;
+	}
+
+	#search-form {
+		margin-top: 20px;
+	}
+
+	#location-input {
+		width: 300px;
+		padding: 10px;
+		border: none;
+		border-radius: 5px;
+		font-size: 16px;
+	}
+
+	.btn-primary {
+		color: #fff;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
+	/* Main section styles */
+	main {
+		display: flex;
+		justify-content: space-between;
+		padding: 20px;
+	}
+
+	.filter-container {
+		flex: 0 0 25%;
+		background-color: #f9f9f9;
+		padding: 20px;
+		border: 1px solid grey;
+		border-radius: 5px;
+		margin-left: 350px
+	}
+
+	.filter {
+		font-size: 28px;
+		padding-bottom: 20px;
+		margin-top: 8px;
+		text-align: left;
+	}
+
+	.category-checkbox {
+		margin-bottom: 10px;
+	}
+
+	#result-count {
+		font-size: 28px;
+		padding-bottom: 20px;
+		margin-top: 20px;
+		text-align: left;
+
+	}
+
+	#activities-section {
+		flex: 0 0 75%;
+		background-color: #fff;
+		padding: 20px;
+
+	}
+
+	.activity {
+		display: flex;
+		border: 1px solid grey;
+		border-radius: 20px;
+		margin-bottom: 10px;
+		height: 200px;
+		margin-right: 600px
+	}
+
+	.activity img {
+		width: 200px;
+		max-height: 200px;
+		object-fit: cover;
+		margin-right: 20px;
+		border-radius: 20px;
+	}
+
+	.activity-details {
+		left: 520px;
+		bottom: 1300px;
+		text-align: left;
+	}
+
+	.activity-details h3 {
+		font-size: 32px;
+		margin-bottom: 10px;
+		margin-top: 20px;
+	}
+
+	.activity-details p {
+		font-size: 24px;
+
+	}
+
+	.book-btn {
+		margin-top: 10px;
+
+	}
+
+	#validfrom-input {
+		width: 150px;
+		padding: 10px;
+		border: none;
+		border-radius: 5px;
+		font-size: 16px;
+	}
+
+	#validto-input {
+		width: 150px;
+		padding: 10px;
+		border: none;
+		border-radius: 5px;
+		font-size: 16px;
+	}
+
+	.add-to-favorites-btn {
+	    position: relative;
+	    top: -180px; /* 向上移動10像素 */
+	    right: -120px; /* 向右移動10像素 */
+	}
+	
+	.price {
+			position: relative;
+			left: 330px;
+			bottom: 100px;
+			padding: 20px;
+		}
+		
+		.price p {
+			margin-bottom:-10px;
+				}	
+		
+		
+</style>
+</head>
+
+<body>
+	<div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img
+				src="images/ie8-panel/warning_bar_0000_us.jpg" height="42" width="820"
+				alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a>
+	</div>
+	<div class="preloader">
+		<div class="preloader-body">
+			<div class="cssload-container">
+				<div class="cssload-speeding-wheel"></div>
+			</div>
+			<p>Loading...</p>
+		</div>
+	</div>
+	<div class="page">
+
+		<!-- RD Navbar-->
+		<div class="rd-navbar-wrap">
+			<nav class="rd-navbar rd-navbar-corporate" data-layout="rd-navbar-fixed" data-sm-layout="rd-navbar-fixed"
+				data-md-layout="rd-navbar-fixed" data-md-device-layout="rd-navbar-fixed"
+				data-lg-layout="rd-navbar-static" data-lg-device-layout="rd-navbar-fixed"
+				data-xl-layout="rd-navbar-static" data-xl-device-layout="rd-navbar-static"
+				data-xxl-layout="rd-navbar-static" data-xxl-device-layout="rd-navbar-static"
+				data-lg-stick-up-offset="46px" data-xl-stick-up-offset="46px" data-xxl-stick-up-offset="106px"
+				data-lg-stick-up="true" data-xl-stick-up="true" data-xxl-stick-up="true">
+				<div class="rd-navbar-collapse-toggle rd-navbar-fixed-element-1"
+					data-rd-navbar-toggle=".rd-navbar-collapse">
+					<span></span>
+				</div>
+				<div class="rd-navbar-aside-outer">
+					<div class="rd-navbar-aside">
+						<!-- RD Navbar Panel-->
+						<div class="rd-navbar-panel">
+							<!-- RD Navbar Toggle-->
+							<button class="rd-navbar-toggle"
+								data-rd-navbar-toggle=".rd-navbar-nav-wrap"><span></span></button>
+							<!-- RD Navbar Brand-->
+							<div class="rd-navbar-brand">
+								<!--                    &lt;!&ndash;Brand&ndash;&gt;<a class="brand" href="index.html"><img src="images/logo-default-450x37.png" alt="" width="10" height="18"/></a>-->
+								<!--Brand--><a class="brand" href="home.html"><img src="/picture/logo/LOGO_PLUS2.png"
+										style="max-height:100%; max-width:100%" /></a>
+							</div>
+						</div>
+						<div class="rd-navbar-aside-right rd-navbar-collapse">
+							<ul class="rd-navbar-corporate-contacts">
+
+								<li class="nav-item">
+									<a href="#" class="position-relative me-4 my-auto">
+										<i class="fa  fa-2x">住宿</i>
+
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="/activityqueryallfront" class="position-relative me-4 my-auto">
+										<i class="fa  fa-2x">活動</i>
+
+									</a>
+								</li>
+								<li class="nav-item">
+									<a href="#" class="position-relative me-4 my-auto">
+										<i class="fa  fa-2x">租車</i>
+
+									</a>
+								</li>
+								<!--                  <li class="nav-item">-->
+								<!--                    <a href="cart.html" class="position-relative me-4 my-auto">-->
+								<!--                      <i class="fa fa-shopping-bag fa-2x"></i>-->
+
+								<!--                    </a>-->
+								</li>
+								<li class="nav-item">
+									<a href="cart.html" class="position-relative me-4 my-auto">
+										<i class="fa  fa-2x">論壇</i>
+
+									</a>
+								</li>
+								<li class="nav-item" id="loginLink">
+									<a href="cart.html" class="position-relative me-4 my-auto">
+										<i class="fa -bag fa-2x">登入</i>
+
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="rd-navbar-main-outer">
+					<div class="rd-navbar-main">
+						<div class="rd-navbar-nav-wrap">
+							<ul class="list-inline list-inline-md rd-navbar-corporate-list-social">
+								<li><a class="icon fa fa-facebook" href="#"></a></li>
+								<li><a class="icon fa fa-twitter" href="#"></a></li>
+								<li><a class="icon fa fa-google-plus" href="#"></a></li>
+								<li><a class="icon fa fa-instagram" href="#"></a></li>
+
+							</ul>
+							<!-- RD Navbar Nav-->
+							<ul class="rd-navbar-nav">
+								<li class="rd-nav-item active"><a class="rd-nav-link" href="index.html">Home</a>
+								</li>
+								<li class="rd-nav-item"><a class="rd-nav-link" href="about.html">About</a>
+								</li>
+								<li class="rd-nav-item"><a class="rd-nav-link" href="typography.html">Typography</a>
+								</li>
+								<li class="rd-nav-item"><a class="rd-nav-link" href="contact-us.html">Contact Us</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+
+
+		<form id="search-form" th:action="@{/activityquerybylocationanddate}" method="get">
+			<select id="location-input" name="locationName" placeholder="請選擇旅遊地點" required>
+				<option value="">請選擇旅遊地點</option>
+				<option value="1">台北市</option>
+				<option value="2">新北市</option>
+				<option value="3">桃園市</option>
+				<option value="4">台中市</option>
+				<option value="5">台南市</option>
+				<option value="6">高雄市</option>
+				<option value="7">基隆市</option>
+				<option value="8">新竹市</option>
+				<option value="9">嘉義市</option>
+				<option value="10">新竹縣</option>
+				<option value="11">苗栗縣</option>
+				<option value="12">彰化縣</option>
+				<option value="13">南投縣</option>
+				<option value="14">雲林縣</option>
+				<option value="15">嘉義縣</option>
+				<option value="16">屏東縣</option>
+				<option value="17">宜蘭縣</option>
+				<option value="18">花蓮縣</option>
+				<option value="19">台東縣</option>
+				<option value="20">澎湖縣</option>
+				<option value="21">金門縣</option>
+				<option value="22">連江縣</option>
+			</select>
+			<!-- <form id="search-form" th:action="@{/activityquerybydate}" method="get"> -->
+			<label for="validfrom-input">開始日期:</label>
+			<input type="date" id="validfrom-input" name="validfrom" required>
+			<label for="validto-input">結束日期:</label>
+			<input type="date" id="validto-input" name="validto" required>
+			<button type="submit" class="btn btn-primary">搜尋</button>
+			<a th:href="@{/myFavoriteActivity}" class="btn btn-primary">我的行程</a>
+		</form>
+
+
+
+
+		<main>
+			<aside class="filter-container">
+				<div id="result-count">&nbsp;</div>
+				<div class="filter-header"></div>
+				<div class="filter">
+					<h1>根據以下項目篩選：</h1>
+					<h3>類別</h3>
+					<label><input type="checkbox" value="文化" class="category-checkbox"> 文化</label><br>
+					<label><input type="checkbox" value="冒險" class="category-checkbox"> 冒險</label><br>
+					<label><input type="checkbox" value="休閒" class="category-checkbox"> 休閒</label><br>
+					<label><input type="checkbox" value="自然" class="category-checkbox"> 自然</label><br><br>
+					<h3>價格</h3>
+					<label><input type="checkbox" value="0~2000" class="price-checkbox"> 2000 TWD 以下</label><br>
+					<label><input type="checkbox" value="2001~4000" class="price-checkbox"> 2001 TWD - 4000
+						TWD</label><br>
+					<label><input type="checkbox" value="4001~6000" class="price-checkbox"> 4001 TWD - 6000
+						TWD</label><br>
+					<label><input type="checkbox" value="6001~8000" class="price-checkbox"> 6001 TWD - 8000
+						TWD</label><br>
+				</div>
+			</aside>
+
+			<div id="activities-section">
+				<div th:if="${not #lists.isEmpty(activities)}">
+					<div th:each="activity : ${activities}">
+						<div class="activity">
+							<img th:if="${activity.activityImages != null and not #lists.isEmpty(activity.activityImages)}"
+								th:src="@{'picture/activity/' + ${activity.activityImages.get(0).imagepath}}"
+								alt="${activity.tourName}" />
+							<img th:unless="${activity.activityImages != null and not #lists.isEmpty(activity.activityImages)}"
+								src="path_to_blank_image/blank-image.jpg" alt="Blank Image" />
+							<div class="activity-details">
+								<h3 th:text="${activity.tourName}"></h3>
+								<p th:text="${activity.tourDescription}"></p>
+								<p th:text="${activity.tourCategory}"></p>
+								<!--<p th:text="${activity.validFrom}"></p>-->
+								<!--<p th:text="${activity.validTo}"></p>-->
+								<div class="price">
+									<p th:text="'價格TWD ' + ${activity.price}"></p>
+									<form action="activityqueryfront" method="get">
+										<input type="hidden" name="tourId" th:value="${activity.tourID}" />
+										<button type="submit" class="book-btn btn btn-primary">查看詳細活動資訊</button>
+									</form>
+
+									<button class="btn btn-primary add-to-favorites-btn" 
+									        th:attr="data-activityName=${activity.tourName}, 
+									                  data-activityDescription=${activity.tourDescription}, 
+									                  data-activityPrice=${activity.price},
+									                  data-fullAddress=${activity.fullAddress},
+									                  data-durationHours=${activity.durationhours}"
+									        title="加入我的行程">
+									    <i class="fa-solid fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<p th:if="${#lists.isEmpty(activities)}">無符合條件活動。</p>
+			</div>
+
+		</main>
+
+
+
+
+
+		<!-- Page Footer-->
+		<a class="banner" href="https://www.templatemonster.com/intense-multipurpose-html-template.html"
+			target="_blank"></a>
+		<footer class="section footer-corporate context-dark">
+			<div class="footer-corporate-inset">
+				<div class="container">
+					<div class="row row-40 justify-content-lg-between">
+						<div class="col-sm-6 col-md-12 col-lg-3 col-xl-4">
+							<div class="oh-desktop">
+								<div class="wow slideInRight" data-wow-delay="0s">
+									<h6 class="text-spacing-100 text-uppercase">Contact us</h6>
+									<ul class="footer-contacts d-inline-block d-sm-block">
+										<li>
+											<div class="unit">
+												<div class="unit-left"><span class="icon fa fa-phone"></span></div>
+												<div class="unit-body"><a class="link-phone" href="tel:#">+1
+														323-913-4688</a></div>
+											</div>
+										</li>
+										<li>
+											<div class="unit">
+												<div class="unit-left"><span class="icon fa fa-envelope"></span></div>
+												<div class="unit-body"><a class="link-aemail"
+														href="mailto:#">info@demolink.org</a></div>
+											</div>
+										</li>
+										<li>
+											<div class="unit">
+												<div class="unit-left"><span class="icon fa fa-location-arrow"></span>
+												</div>
+												<div class="unit-body"><a class="link-location" href="#">4730 Crystal
+														Springs Dr, Los Angeles,
+														CA 90027</a></div>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-5 col-lg-3 col-xl-4">
+							<div class="oh-desktop">
+								<div class="wow slideInDown" data-wow-delay="0s">
+									<h6 class="text-spacing-100 text-uppercase">Popular news</h6>
+									<!-- Post Minimal 2-->
+									<article class="post post-minimal-2">
+										<p class="post-minimal-2-title"><a href="#">Your Personal Guide to 5 Best Places
+												to Visit on
+												Earth</a></p>
+										<div class="post-minimal-2-time">
+											<time datetime="2019-05-04">May 04, 2019</time>
+										</div>
+									</article>
+									<!-- Post Minimal 2-->
+									<article class="post post-minimal-2">
+										<p class="post-minimal-2-title"><a href="#">Top 10 Hotels: Rating by Wonder Tour
+												Travel Experts</a>
+										</p>
+										<div class="post-minimal-2-time">
+											<time datetime="2019-05-04">May 04, 2019</time>
+										</div>
+									</article>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-11 col-md-7 col-lg-5 col-xl-4">
+							<div class="oh-desktop">
+								<div class="wow slideInLeft" data-wow-delay="0s">
+									<h6 class="text-spacing-100 text-uppercase">Quick links</h6>
+									<ul
+										class="row-6 list-0 list-marked list-marked-md list-marked-secondary list-custom-2">
+										<li><a href="about.html">About us</a></li>
+										<li><a href="#">Our Tours</a></li>
+										<li><a href="#">Our Team</a></li>
+										<li><a href="#">Gallery</a></li>
+										<li><a href="#">Blog</a></li>
+									</ul>
+									<div class="group-md group-middle justify-content-sm-start"><a
+											class="button button-lg button-primary button-ujarak" href="#">Get in
+											touch</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="footer-corporate-bottom-panel">
+				<div class="container">
+					<div class="row justfy-content-xl-space-berween row-10 align-items-md-center2">
+						<div class="col-sm-6 col-md-4 text-sm-right text-md-center">
+							<div>
+								<ul class="list-inline list-inline-sm footer-social-list-2">
+									<li><a class="icon fa fa-facebook" href="#"></a></li>
+									<li><a class="icon fa fa-twitter" href="#"></a></li>
+									<li><a class="icon fa fa-google-plus" href="#"></a></li>
+									<li><a class="icon fa fa-instagram" href="#"></a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-4 order-sm-first">
+							<!-- Rights-->
+							<p class="rights"><span>&copy;&nbsp;</span><span
+									class="copyright-year"></span><span>&nbsp;</span><span>Wonder Tour</span>. All
+								Rights Reserved. Design
+								by <a href="https://www.templatemonster.com">TemplateMonster</a></p>
+						</div>
+						<div class="col-sm-6 col-md-4 text-md-right">
+							<p class="rights"><a href="#">Privacy Policy</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</div>
+	<!-- Global Mailform Output-->
+	<div class="snackbars" id="form-output-global"></div>
+	<!-- Javascript-->
+	<script src="/static/activity/js/core.min.js"></script>
+	<script src="/static/activity/js/script.js"></script>
+	<!--	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$('#search-form').submit(function (event) {
+				event.preventDefault(); // 防止表單提交
+
+				// 獲取表單數據
+				var formData = {
+					location: $('#location-input').val(),
+					validfrom: $('#validfrom-input').val(),
+					validto: $('#validto-input').val()
+				};
+
+				// 使用 AJAX 發送 GET 請求
+				$.ajax({
+					type: 'GET',
+					url: '/activityquery',
+					data: formData,
+					success: function (response) {
+						// 處理成功響應，更新頁面的內容
+						const tempDiv = document.createElement('div');
+						tempDiv.innerHTML = response;
+
+						// 從臨時div中找到活動部分的HTML內容
+						const activitiesSectionHTML = tempDiv.querySelector('#activities-section').innerHTML;
+
+						// 更新頁面中ID為activities-section的容器的HTML內容
+						const activitiesSection = document.getElementById('activities-section');
+						activitiesSection.innerHTML = ''; // 清空原先的內容
+						activitiesSection.insertAdjacentHTML('beforeend', activitiesSectionHTML); // 插入新的活動內容
+
+						// 更新資料筆數顯示
+						const activitiesCount = tempDiv.querySelectorAll('.activity').length;
+						const resultCountElement = document.getElementById('result-count');
+						resultCountElement.innerText = "共" + activitiesCount + "筆資料";
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.error(xhr.responseText);
+					}
+				});
+			});
+		});
+
+		document.addEventListener("DOMContentLoaded", function () {
+			// 獲取所有的價格範圍核取方塊
+			const priceCheckboxes = document.querySelectorAll('.price-checkbox');
+			// 獲取所有的活動類別核取方塊
+			const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+
+			function applyFilters() {
+				// 獲取選中的價格範圍和活動類別
+				const selectedPrices = Array.from(priceCheckboxes)
+					.filter(cb => cb.checked)
+					.map(cb => cb.value);
+				const selectedCategories = Array.from(categoryCheckboxes)
+					.filter(cb => cb.checked)
+					.map(cb => cb.value);
+
+				// 獲取位置和日期參數
+				const location = $('#location-input').val();
+				const validfrom = $('#validfrom-input').val();
+				const validto = $('#validto-input').val();
+
+				// 更新 URL 中的搜索參數
+				const url = '/activityquery?location=' + encodeURIComponent(location) +
+					'&validfrom=' + encodeURIComponent(validfrom) +
+					'&validto=' + encodeURIComponent(validto) +
+					'&prices=' + encodeURIComponent(selectedPrices.join(',')) +
+					'&tourCategories=' + encodeURIComponent(selectedCategories.join(','));
+
+				// 使用 AJAX 發送 GET 請求
+				$.ajax({
+					type: 'GET',
+					url: url,
+					success: function (response) {
+						// 處理成功響應，更新頁面的內容
+						const tempDiv = document.createElement('div');
+						tempDiv.innerHTML = response;
+
+						// 從臨時 div 中找到活動部分的 HTML 內容
+						const activitiesSectionHTML = tempDiv.querySelector('#activities-section').innerHTML;
+
+						// 更新頁面中 ID 為 activities-section 的容器的 HTML 內容
+						const activitiesSection = document.getElementById('activities-section');
+						activitiesSection.innerHTML = ''; // 清空原先的內容
+						activitiesSection.insertAdjacentHTML('beforeend', activitiesSectionHTML); // 插入新的活動內容
+
+						// 更新數據筆數顯示
+						const activitiesCount = tempDiv.querySelectorAll('.activity').length;
+						const resultCountElement = document.getElementById('result-count');
+						resultCountElement.innerText = "共" + activitiesCount + "筆資料";
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.error(xhr.responseText);
+					}
+				});
+			}
+
+			// 監聽價格範圍核取方塊的點擊事件
+			priceCheckboxes.forEach(function (checkbox) {
+				checkbox.addEventListener('click', applyFilters);
+			});
+
+			// 監聽活動類別核取方塊的點擊事件
+			categoryCheckboxes.forEach(function (checkbox) {
+				checkbox.addEventListener('click', applyFilters);
+			});
+		});
+
+	</script>
+
+
+
+	<script th:inline="javascript">
+		document.addEventListener("DOMContentLoaded", function () {
+			// 綁定事件到父元素
+			document.getElementById('activities-section').addEventListener('click', function (event) {
+				// 檢查點擊的元素是否是"加入收藏"按鈕
+				if (event.target.classList.contains('add-to-favorites-btn')) {
+					// 獲取當前活動的信息
+					const button = event.target;
+					const activityName = button.getAttribute('data-activityName');
+					const activityDescription = button.getAttribute('data-activityDescription');
+					const activityPrice = button.getAttribute('data-activityPrice');
+					const fullAddress = button.getAttribute('data-fullAddress');
+					const durationHours = button.getAttribute('data-durationHours'); // 獲取durationHours參數
+					console.log(fullAddress);
+					// 構造活動物件
+					const activity = {
+						name: activityName,
+						description: activityDescription,
+						price: activityPrice,
+						fullAddress: fullAddress,
+						durationHours: durationHours // 添加durationHours到活動物件
+					};
+
+					// 存儲活動信息到本地存儲中
+					let favoriteActivities = JSON.parse(localStorage.getItem('favoriteActivities')) || [];
+					favoriteActivities.push(activity);
+					localStorage.setItem('favoriteActivities', JSON.stringify(favoriteActivities));
+					// 提示使用者活動已收藏
+					alert('活動已成功收藏！');
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>

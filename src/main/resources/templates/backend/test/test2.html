@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaflet Routing Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <style>
+    #map {
+      display: none; /* 隐藏地图 */
+    }
+  </style>
+</head>
+<body>
+  <div id="route-info"></div>
+
+  <div id="map" style="height: 400px;"></div>
+
+  <script>
+    var map = L.map('map').setView([24.137, 120.686], 5); // 创建地图对象并设置初始中心和缩放级别
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map); // 添加 OpenStreetMap 图层
+
+    var address1 = [24.137, 120.686]; // 台中市中區成功路300號的经纬度
+    var address2 = [25.108, 121.822]; // 新北市瑞芳區逢甲路82號的经纬度
+
+    // 计算路线并获取交通时间
+    L.Routing.control({
+      waypoints: [
+        L.latLng(address1), // 地址1的经纬度
+        L.latLng(address2) // 地址2的经纬度
+      ],
+      routeWhileDragging: true, // 拖动地图时实时更新路线
+      show: false // 不显示地图上的路线线条
+    }).on('routesfound', function(e) {
+      var routes = e.routes;
+      if (routes && routes.length > 0) {
+        var route = routes[0];
+        var totalTime = route.summary.totalTime; // 获取总的时间（单位：秒）
+        
+        // 将时间从秒转换为分钟
+        var totalMinutes = Math.round(totalTime / 60);
+        
+        // 更新显示交通时间的元素
+        document.getElementById('route-info').innerHTML = '交通时间：' + totalMinutes + '分钟';
+      } else {
+        console.error('No routes found');
+      }
+    }).addTo(map);
+  </script>
+</body>
+</html>

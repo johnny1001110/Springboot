@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>新增活動</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  h2 {
+    color: #333;
+    text-align: center;
+  }
+  form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  label {
+    font-weight: bold;
+  }
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type="date"],
+  input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type="submit"] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  input[type="submit"]:hover {
+    background-color: #45a049;
+  }
+</style>
+</head>
+<body>
+
+<h2>新增活動</h2>
+
+<form id="activityForm" action="/activity/insert" method="post" enctype="multipart/form-data">
+  <label for="tourName">活動名稱:</label><br>
+  <input type="text" id="tourName" name="tourName"><br>
+  <label for="tourCategory">類別:</label><br>
+  <input type="text" id="tourCategory" name="tourCategory"><br>
+  <label for="tourDescription">描述:</label><br>
+  <input type="text" id="tourDescription" name="tourDescription"><br>
+  <label for="includedItems">包含項目:</label><br>
+  <input type="text" id="includedItems" name="includedItems"><br>
+  <label for="excludedItems">不包含項目:</label><br>
+  <input type="text" id="excludedItems" name="excludedItems"><br>
+  <label for="restrictions">限制條件:</label><br>
+  <input type="text" id="restrictions" name="restrictions"><br>
+  <label for="additional">額外資訊:</label><br>
+  <input type="text" id="additional" name="additional"><br>
+  <label for="maxParticipants">最大參與人數:</label><br>
+  <input type="text" id="maxParticipants" name="maxParticipants"><br>
+  <label for="location">地點:</label><br>
+  <select id="location" name="location">
+	<option value="1">台北市</option>
+	<option value="2">新北市</option>
+	<option value="3">桃園市</option>
+	<option value="4">台中市</option>
+	<option value="5">台南市</option>
+	<option value="6">高雄市</option>
+	<option value="7">基隆市</option>
+	<option value="8">新竹市</option>
+	<option value="9">嘉義市</option>
+	<option value="10">新竹縣</option>
+	<option value="11">苗栗縣</option>
+	<option value="12">彰化縣</option>
+	<option value="13">南投縣</option>
+	<option value="14">雲林縣</option>
+	<option value="15">嘉義縣</option>
+	<option value="16">屏東縣</option>
+	<option value="17">宜蘭縣</option>
+	<option value="18">花蓮縣</option>
+	<option value="19">台東縣</option>
+	<option value="20">澎湖縣</option>
+	<option value="21">金門縣</option>
+	<option value="22">連江縣</option>
+  </select><br>
+  <label for="fullAddress">地址:</label><br>
+  <input type="text" id="fullAddress" name="fullAddress"><br>
+  <label for="durationhours">時長（小時）:</label><br>
+  <input type="number" id="durationhours" name="durationhours"><br>
+  <label for="price">價格:</label><br>
+  <input type="number" id="price" name="price"><br>
+  <label for="discount">折扣:</label><br>
+  <input type="number" id="discount" name="discount"><br>
+  <label for="validFrom">有效開始日期:</label><br>
+  <input type="date" id="validFrom" name="validFrom"><br>
+  <label for="validTo">有效結束日期:</label><br>
+  <input type="date" id="validTo" name="validTo"><br><br>
+  <label for="images">選擇圖片:</label><br>
+  <input type="file" id="images" name="imageFiles" multiple><br><br>
+  <div id="imageInputs"></div>
+   <input type="submit" value="提交">
+  <button id="fillDataButton" type="button">一鍵輸入</button>
+</form> 
+
+
+<script>
+document.getElementById("fillDataButton").addEventListener("click", function() {
+  document.getElementById("tourName").value = "太魯閣峽谷健行";
+  document.getElementById("tourCategory").value = "自然";
+  document.getElementById("tourDescription").value = "在台灣太魯閣峽谷進行健行探險";
+  document.getElementById("includedItems").value = "導覽、健行器材";
+  document.getElementById("excludedItems").value = "食物、交通";
+  document.getElementById("restrictions").value = "16 歲以上參加、需有基本體能";
+  document.getElementById("additional").value = "請自備水壺";
+  document.getElementById("maxParticipants").value = "10";
+  document.getElementById("fullAddress").value = "花蓮縣秀林鄉";
+  document.getElementById("durationhours").value = "1";
+  document.getElementById("price").value = "5000";
+  document.getElementById("discount").value = "4000";
+  document.getElementById("validFrom").value = "2024-04-25";
+  document.getElementById("validTo").value = "2024-04-25";
+});
+</script>
+
+<script>
+  document.getElementById('validTo').addEventListener('change', function() {
+    var validFrom = new Date(document.getElementById('validFrom').value);
+    var validTo = new Date(this.value);
+
+    if (validTo <= validFrom) {
+      alert('有效結束日期必須大於有效開始日期');
+      this.value = ''; // 清空有效結束日期的值
+    }
+  });
+</script>
+
+
+</body>
+</html>
