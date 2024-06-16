@@ -135,14 +135,14 @@ public class ActivityController {
 		return "redirect:/activityqueryall";
 	}
 
-	@GetMapping("/activity/edit/{id}")
+	@PutMapping("/activity/edit/{id}")
 	public String editActivity(@PathVariable("id") Integer id, Model model) {
 		Activity activity = aService.findById(id);
 		model.addAttribute("activity", activity);
 		return "/backend/activity/editActivity";
 	}
 
-	@PostMapping("/activity/update/{tourID}")
+	@PutMapping("/activity/update/{tourID}")
 	public String updateActivity(@PathVariable("tourID") Integer tourID, @ModelAttribute Activity activity) {
 		activity.setTourID(tourID);
 		aService.update(activity);
