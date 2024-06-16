@@ -22,7 +22,6 @@ import com.trippergoplus.backend.activity.model.ActivityImage;
 import com.trippergoplus.backend.activity.model.ActivityLocation;
 import com.trippergoplus.backend.activity.service.ActivityService;
 
-
 @Controller
 public class ActivityController {
 
@@ -40,51 +39,47 @@ public class ActivityController {
 		List<Activity> filteredActivities = new ArrayList<>();
 
 		if (location != null && validfrom != null && validto != null) {
-			// 如果提供了地点和日期，则进行地点和日期的查询
+			// 如果提供了地點和日期，則進行地點和日期的查詢
 			List<Activity> activitiesByLocationAndDate = aService.findByLocationAndDateRange(location, validfrom,
 					validto);
-			// 根据其他筛选条件进行进一步筛选
+			// 根據其他篩選條件進一步篩選
 			if (!activitiesByLocationAndDate.isEmpty()) {
 				if ((tourCategories != null && !tourCategories.isEmpty()) || (prices != null && !prices.isEmpty())) {
-					// 使用其他筛选条件进行进一步筛选
+					// 使用其他篩選條件進一步篩選
 					if (tourCategories != null && !tourCategories.isEmpty() && prices != null && !prices.isEmpty()) {
-						// 同时根据活动分类和价格范围进行筛选
+						// 同時根據活動分類和價格範圍進行篩選
 						filteredActivities = aService.findByTourCategoriesAndPriceRangeAndLocationAndDate(
 								tourCategories, prices, location, validfrom, validto);
 					} else if (tourCategories != null && !tourCategories.isEmpty()) {
-						// 根据活动分类进行筛选
+						// 根據活動分類進行篩選
 						filteredActivities = aService.findByTourCategoriesAndLocationAndDate(tourCategories, location,
 								validfrom, validto);
 					} else {
-						// 根据价格范围进行筛选
+						// 根據價格範圍進行篩選
 						filteredActivities = aService.findByPriceRangeAndLocationAndDate(prices, location, validfrom,
 								validto);
 					}
 				} else {
-					// 如果未指定其他筛选条件，则直接使用地点和日期的查询结果
+					// 如果未指定其他篩選條件，則直接使用地點和日期的查詢結果
 					filteredActivities = activitiesByLocationAndDate;
 				}
 			}
 		} else {
-			// 如果没有提供地点和日期，则直接根据其他筛选条件进行查询
+			// 如果沒有提供地點和日期，則直接根據其他篩選條件進行查詢
 			if ((tourCategories != null && !tourCategories.isEmpty()) || (prices != null && !prices.isEmpty())) {
-				// 使用其他筛选条件进行查询
-				// System.out.println("1"+prices);
+				// 使用其他篩選條件進行查詢
 				if (tourCategories != null && !tourCategories.isEmpty() && prices != null && !prices.isEmpty()) {
-					// 同时根据活动分类和价格范围进行查询
+					// 同時根據活動分類和價格範圍進行查詢
 					filteredActivities = aService.findByTourCategoriesAndPriceRange(tourCategories, prices);
-					// System.out.println("2"+prices);
 				} else if (tourCategories != null && !tourCategories.isEmpty()) {
-					// 根据活动分类进行查询
+					// 根據活動分類進行查詢
 					filteredActivities = aService.findByTourCategories(tourCategories);
-					// System.out.println("3"+prices);
 				} else {
-					// 根据价格范围进行查询
+					// 根據價格範圍進行查詢
 					filteredActivities = aService.findByPriceRange(prices);
-					System.out.println("4" + prices);
 				}
 			} else {
-				// 如果没有提供任何筛选条件，则可能执行默认操作，这里示例返回所有活动
+				// 如果沒有提供任何篩選條件，則可能執行默認操作，這裡示例返回所有活動
 				filteredActivities = aService.findAll();
 			}
 		}
@@ -120,17 +115,6 @@ public class ActivityController {
 		}
 	}
 
-//	後端加分頁
-//	@GetMapping("/activityqueryall")
-//	public String processQueryAll(@RequestParam(defaultValue = "0") int page,
-//			@RequestParam(defaultValue = "10") int size, Model model) {
-//		Page<Activity> activityPage = aService.findAllByPage(PageRequest.of(page, size));
-//		model.addAttribute("activities", activityPage.getContent());
-//		model.addAttribute("currentPage", page);
-//		model.addAttribute("totalPages", activityPage.getTotalPages());
-//		return "/backend/activity/activityQueryAll";
-//	}
-
 	@GetMapping("/activityqueryall")
 	public String processQueryAll(Model model) {
 		List<Activity> allActivities = aService.findAll();
@@ -152,8 +136,7 @@ public class ActivityController {
 	}
 
 	@GetMapping("/activity/edit/{id}")
-	public String showEditForm(@PathVariable("id") Integer id, Model model) {
-		System.out.println(id);
+	public String editActivity(@PathVariable("id") Integer id, Model model) {
 		Activity activity = aService.findById(id);
 		model.addAttribute("activity", activity);
 		return "/backend/activity/editActivity";
@@ -165,6 +148,17 @@ public class ActivityController {
 		aService.update(activity);
 		return "redirect:/activityqueryall";
 	}
+
+//	後端加分頁
+//	@GetMapping("/activityqueryall")
+//	public String processQueryAll(@RequestParam(defaultValue = "0") int page,
+//			@RequestParam(defaultValue = "10") int size, Model model) {
+//		Page<Activity> activityPage = aService.findAllByPage(PageRequest.of(page, size));
+//		model.addAttribute("activities", activityPage.getContent());
+//		model.addAttribute("currentPage", page);
+//		model.addAttribute("totalPages", activityPage.getTotalPages());
+//		return "/backend/activity/activityQueryAll";
+//	}
 
 //	@GetMapping("/activityquery")
 //	public String getActivitiesByFilters(

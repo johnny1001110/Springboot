@@ -62,8 +62,8 @@ public class Activity {
 
 	@Column(name = "Maxparticipants")
 	private int maxParticipants;
-
 	@OneToOne
+
 	@JoinColumn(name = "LocationID")
 //	@Column(name = "LocationID")
 	private ActivityLocation location;

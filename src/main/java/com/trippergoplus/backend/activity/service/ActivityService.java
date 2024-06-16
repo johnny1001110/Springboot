@@ -25,7 +25,6 @@ import com.trippergoplus.backend.activity.model.ActivityLocation;
 import com.trippergoplus.backend.activity.repository.ActivityImageRepository;
 import com.trippergoplus.backend.activity.repository.ActivityRepository;
 
-
 @Service
 @Transactional
 public class ActivityService {
@@ -125,14 +124,6 @@ public class ActivityService {
 		return aRepos.findByLocation(location);
 	}
 
-	public List<Activity> findBytourCategory(String tourCategory) {
-		return aRepos.findByTourCategory(tourCategory);
-	}
-
-//	public List<Activity> findByLocationAndDateRange(Location location, LocalDate validfrom, LocalDate validto) {
-//		return aRepos.findByLocationAndValidFromBetween(location, validfrom, validto);
-//	}
-
 	public List<Activity> findByTourCategories(List<String> tourCategories) {
 		return aRepos.findByTourCategoryIn(tourCategories);
 	}
@@ -163,6 +154,11 @@ public class ActivityService {
 		return aRepos.findByPriceBetween(minPrice, maxPrice);
 	}
 
+	public List<Activity> findByLocationAndDateRange(ActivityLocation location, LocalDate validfrom,
+			LocalDate validto) {
+		return aRepos.findByLocationAndValidFromAndValidToBetween(location, validfrom, validto);
+	}
+
 	public List<Activity> findByTourCategoriesAndPriceRange(List<String> tourCategories, List<String> prices) {
 		List<Activity> result = new ArrayList<>();
 
@@ -191,75 +187,67 @@ public class ActivityService {
 		return result;
 	}
 
-	public List<Activity> findByLocationAndDateRange(ActivityLocation location, LocalDate validfrom, LocalDate validto) {
-		return aRepos.findByLocationAndValidFromAndValidToBetween(location, validfrom, validto);
+	public List<Activity> findByTourCategoriesAndPriceRangeAndLocationAndDate(List<String> tourCategories,
+			List<String> prices, ActivityLocation location, LocalDate validfrom, LocalDate validto) {
+		List<Activity> result = new ArrayList<>();
+
+		// 檢查是否有傳遞了活動類別、價格範圍、地點和日期參數
+		if (tourCategories != null && !tourCategories.isEmpty() && prices != null && !prices.isEmpty()
+				&& location != null && validfrom != null && validto != null) {
+			// 初始化最小價格和最大價格為整型最小值和最大值
+			int minPrice = Integer.MAX_VALUE;
+			int maxPrice = Integer.MIN_VALUE;
+
+			// 遍歷價格範圍列表，找到最小值和最大值
+			for (String priceRange : prices) {
+				String[] range = priceRange.split("~");
+				if (range.length == 2) {
+					int lowerBound = Integer.parseInt(range[0]);
+					int upperBound = Integer.parseInt(range[1]);
+					// 更新最小值和最大值
+					minPrice = Math.min(minPrice, lowerBound);
+					maxPrice = Math.max(maxPrice, upperBound);
+				}
+			}
+
+			// 使用價格範圍、活動類別、地點和日期同時查詢活動
+			result = aRepos
+					.findByTourCategoryInAndPriceBetweenAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(
+							tourCategories, minPrice, maxPrice, location, validto, validfrom);
+		}
+
+		return result;
 	}
 
-	
-	
-	
-	public List<Activity> findByTourCategoriesAndPriceRangeAndLocationAndDate(
-	        List<String> tourCategories, List<String> prices, ActivityLocation location, LocalDate validfrom, LocalDate validto) {
-	    List<Activity> result = new ArrayList<>();
-
-	    // 檢查是否有傳遞了活動類別、價格範圍、地點和日期參數
-	    if (tourCategories != null && !tourCategories.isEmpty() &&
-	            prices != null && !prices.isEmpty() &&
-	            location != null && validfrom != null && validto != null) {
-	        // 初始化最小價格和最大價格為整型最小值和最大值
-	        int minPrice = Integer.MAX_VALUE;
-	        int maxPrice = Integer.MIN_VALUE;
-
-	        // 遍歷價格範圍列表，找到最小值和最大值
-	        for (String priceRange : prices) {
-	            String[] range = priceRange.split("~");
-	            if (range.length == 2) {
-	                int lowerBound = Integer.parseInt(range[0]);
-	                int upperBound = Integer.parseInt(range[1]);
-	                // 更新最小值和最大值
-	                minPrice = Math.min(minPrice, lowerBound);
-	                maxPrice = Math.max(maxPrice, upperBound);
-	            }
-	        }
-
-	        // 使用價格範圍、活動類別、地點和日期同時查詢活動
-	        result = aRepos.findByTourCategoryInAndPriceBetweenAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-	                tourCategories, minPrice, maxPrice, location, validto, validfrom);
-	    }
-
-	    return result;
+	public List<Activity> findByTourCategoriesAndLocationAndDate(List<String> tourCategories, ActivityLocation location,
+			LocalDate validfrom, LocalDate validto) {
+		return aRepos.findByTourCategoryInAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(tourCategories,
+				location, validto, validfrom);
 	}
 
+	public List<Activity> findByPriceRangeAndLocationAndDate(List<String> prices, ActivityLocation location,
+			LocalDate validfrom, LocalDate validto) {
+		// 初始化最小值和最大值为整型最小值和最大值
+		int minPrice = Integer.MAX_VALUE;
+		int maxPrice = Integer.MIN_VALUE;
 
-	public List<Activity> findByTourCategoriesAndLocationAndDate(
-	        List<String> tourCategories, ActivityLocation location, LocalDate validfrom, LocalDate validto) {
-	    return aRepos.findByTourCategoryInAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-	            tourCategories, location, validto, validfrom);
-	}
+		// 检查是否传递了价格范围参数
+		if (prices != null && !prices.isEmpty()) {
+			// 遍历价格范围列表，找到最小值和最大值
+			for (String priceRange : prices) {
+				String[] range = priceRange.split("~");
+				if (range.length == 2) {
+					int lowerBound = Integer.parseInt(range[0]);
+					int upperBound = Integer.parseInt(range[1]);
+					// 更新最小值和最大值
+					minPrice = Math.min(minPrice, lowerBound);
+					maxPrice = Math.max(maxPrice, upperBound);
+				}
+			}
+		}
 
-	public List<Activity> findByPriceRangeAndLocationAndDate(
-	        List<String> prices, ActivityLocation location, LocalDate validfrom, LocalDate validto) {
-	    // 初始化最小值和最大值为整型最小值和最大值
-	    int minPrice = Integer.MAX_VALUE;
-	    int maxPrice = Integer.MIN_VALUE;
-
-	    // 检查是否传递了价格范围参数
-	    if (prices != null && !prices.isEmpty()) {
-	        // 遍历价格范围列表，找到最小值和最大值
-	        for (String priceRange : prices) {
-	            String[] range = priceRange.split("~");
-	            if (range.length == 2) {
-	                int lowerBound = Integer.parseInt(range[0]);
-	                int upperBound = Integer.parseInt(range[1]);
-	                // 更新最小值和最大值
-	                minPrice = Math.min(minPrice, lowerBound);
-	                maxPrice = Math.max(maxPrice, upperBound);
-	            }
-	        }
-	    }
-
-	    // 使用价格范围和地点日期查询活动
-	    return aRepos.findByPriceBetweenAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(
-	            minPrice, maxPrice, location, validto, validfrom);
+		// 使用价格范围和地点日期查询活动
+		return aRepos.findByPriceBetweenAndLocationAndValidFromLessThanEqualAndValidToGreaterThanEqual(minPrice,
+				maxPrice, location, validto, validfrom);
 	}
 }

@@ -180,23 +180,23 @@
 	}
 
 	.add-to-favorites-btn {
-	    position: relative;
-	    top: -180px; /* 向上移動10像素 */
-	    right: -120px; /* 向右移動10像素 */
+		position: relative;
+		top: -180px;
+		/* 向上移動10像素 */
+		right: -120px;
+		/* 向右移動10像素 */
 	}
-	
+
 	.price {
-			position: relative;
-			left: 330px;
-			bottom: 100px;
-			padding: 20px;
-		}
-		
-		.price p {
-			margin-bottom:-10px;
-				}	
-		
-		
+		position: relative;
+		left: 330px;
+		bottom: 100px;
+		padding: 20px;
+	}
+
+	.price p {
+		margin-bottom: -10px;
+	}
 </style>
 </head>
 
@@ -389,23 +389,21 @@
 								<p th:text="${activity.tourCategory}"></p>
 								<!--<p th:text="${activity.validFrom}"></p>-->
 								<!--<p th:text="${activity.validTo}"></p>-->
-								<div class="price">
-									<p th:text="'價格TWD ' + ${activity.price}"></p>
-									<form action="activityqueryfront" method="get">
-										<input type="hidden" name="tourId" th:value="${activity.tourID}" />
-										<button type="submit" class="book-btn btn btn-primary">查看詳細活動資訊</button>
-									</form>
+							
+							<div class="price">
+								<p th:text="'價格TWD ' + ${activity.price}"></p>
+								<form action="activityqueryfront" method="get">
+									<input type="hidden" name="tourId" th:value="${activity.tourID}" />
+									<button type="submit" class="book-btn btn btn-primary">查看詳細活動資訊</button>
+								</form>
 
-									<button class="btn btn-primary add-to-favorites-btn" 
-									        th:attr="data-activityName=${activity.tourName}, 
+								<button class="btn btn-primary add-to-favorites-btn" th:attr="data-activityName=${activity.tourName}, 
 									                  data-activityDescription=${activity.tourDescription}, 
 									                  data-activityPrice=${activity.price},
 									                  data-fullAddress=${activity.fullAddress},
-									                  data-durationHours=${activity.durationhours}"
-									        title="加入我的行程">
-									    <i class="fa-solid fa-plus"></i>
-									</button>
-								</div>
+									                  data-durationHours=${activity.durationhours}" title="加入我的行程">
+									<i class="fa-solid fa-plus"></i>
+								</button>
 							</div>
 						</div>
 					</div>
@@ -534,7 +532,6 @@
 	</div>
 	<!-- Global Mailform Output-->
 	<div class="snackbars" id="form-output-global"></div>
-	<!-- Javascript-->
 	<script src="/static/activity/js/core.min.js"></script>
 	<script src="/static/activity/js/script.js"></script>
 	<!--	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
